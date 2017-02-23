@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>|| Cows And Bulls</title>
+	<script type="text/javascript" src="jquery.js"></script>
+</head>
+<body>
+<input type="text" id="input" maxlength="4"  > <button id="check">Check</button>
+<div id="op">
+	<br/>
+</div>
+<div  id="hover" >
+<br/>
+	<div id="alert">
+		<div id="alert_data">Welcme to the game !</div>
+		<br/><br/><br/>
+		<button id="alert_closer">OK</button>
+	</div>
+	<div id="confirm">
+		<div id="confirm_data">You want to continue the game ?</div>
+		<br/><br/><br/>
+		<button id="confirm_Canel">Cancel</button><button id="confirm_YES">OKay</button>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	var inputField= document.querySelector("#input");
+	var output= document.querySelector("#op");
+	var checkBotton= document.querySelector("#check");
+	var hover= document.querySelector("#hover");
+	var alert_data= document.querySelector("#alert_data");
+	var alerter= document.querySelector("#alert");
+	var confirm= document.querySelector("#confirm");
+	var randomNumnber="";
+	var alert_closer=document.querySelector("#alert_closer");
+	alert_closer.onclick=closeHover;
+	var input;
+	var one=Math.ceil(Math.random()*9);
+	var livesCount=0;
+	randomNumnber+=one;
+	var tries=0;
+	for(var i=1;i<=3;i++){
+		one=Math.floor(Math.random()*10);
+		while(randomNumnber.indexOf(""+one)>=0){
+			one=Math.floor(Math.random()*10);
+		}
+		randomNumnber+=one;
+	}
+	
+	checkBotton.onclick=check;
+	function check(){
+		prev=input;
+		input=inputField.value;
+		if(input.length<4){
+			return;
+		}
+		var e=0;
+		for(var i=0;i<4;i++){
+			for(var j=i+1;j<4;j++){
+				if(input.charAt(i)==input.charAt(j)){
+					e++;
+				}
+			}
+		}
+		if(e!=0){
+			confirmThis("You have Entered The Eqal digits . Are you sure ?");
+		}
+		else if(prev==input){
+			confirmThis("You have Entered Same input as previous . Do you want to continue ?");
+		}
+		else{
+			computeAndPlace();
+		}
+	}
+	var openedHOver=1;
+	function againCheck(a){
+		if(a==0){
+			openedHOver=0;
+			closeHover();
+			return;
+		}
+		else{
+			computeAndPlace();
+		}
+
+	}	
+	function computeAndPlace(){
+		openedHOver=0;
+		closeHover();
+		var Cows=0;
+		var Bulls=0;
+		for(var i=0;i<4;i++){
+			if(input.indexOf(randomNumnber.charAt(i))>=0){
+				if(i==input.indexOf(randomNumnber.charAt(i))){
+					Cows++;
+				}
+				else{
+					Bulls++;
+				}
+			}
+		}
+		var str=(livesCount+1)+") "+input+"<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cows :"+Cows+" Bulls :"+Bulls;
+		output.innerHTML+=str+"<br/>";
+		inputField.value="";
+		inputField.focus();
+		if(Cows==4){
+			alertThis("You Won the Game !");
+			//winGame();
+		}
+		livesCount++;
+		if(livesCount>=6){
+			alertThis("You Loss the Game !");
+			var str="<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number : "+randomNumnber+"";
+			output.innerHTML+=str+"<br/>";
+			//lossGame();
+		}
+	}
+	
+	function alertThis(a){
+		openedHOver=0;
+		hover.style.display="block";
+		confirm.style.display="none";
+		alerter.style.display="block";
+		alert_data.innerHTML=a;
+		document.querySelector("#alert button").focus();
+	}
+	
+	function confirmThis(a){
+		openedHOver=1;
+		hover.style.display="block";
+		confirm.style.display="block";
+		alerter.style.display="none";
+		confirm_data.innerHTML=a;
+		document.querySelector("#confirm button").focus();
+		var cy=document.querySelector("#confirm_YES");
+		var cc=document.querySelector("#confirm_Canel");
+		cy.onclick=function(){
+			againCheck(1);
+		}
+		cc.onclick=function(){
+			againCheck(0);
+		}
+	}
+	function closeHover(){
+		if(openedHOver!=1){
+			hover.style.display="none";
+		}
+	}
+
+	window.onkeydown=function(e){
+			if(e.which==27){
+				closeHover(0);
+			}
+	}
+	function digitOnly(a){
+		e=a.which;
+		if(e==13){
+			check();
+			return false;
+		}
+		if(e!=9  && e!=17 && e!=65 && e!=46 && e!=16 && !(e>=48 && e<=57) && e!=8 &&!( e>=37 && e<=40)){
+			return false;
+		}
+		else return true;
+	}
+	inputField.onkeydown=digitOnly;
+</script>
+</html>
+<style type="text/css">
+	#hover{
+		width: 100%;
+		height: 800px;
+		background: rgba(0,0,0,0.6);
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		text-align: center;
+		display: none;
+	}
+	#alert{
+		width: 200px;
+		margin: 0 auto;
+		background: white;
+		padding: 5%;
+	}
+	button{
+		padding: 15px;
+		min-width: 100px;
+		background:rgb(245,60,86);
+		color: white;
+		border: 1px solid gray;
+	}
+	input{
+		padding: 15px;
+		min-width: 100px;
+		color: black;
+		border: 1px solid gray;
+	}
+	#confirm{
+		width: 200px;
+		margin: 0 auto;
+		background: white;
+		padding: 5%;
+	}
+</style>
